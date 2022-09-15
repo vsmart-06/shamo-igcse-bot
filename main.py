@@ -23,7 +23,8 @@ async def on_ready():
 
 @bot.event
 async def on_member_join(member: discord.Member):
-    await member.send('''Welcome to Shamo classes! 
+    try:
+        await member.send('''Welcome to Shamo classes! 
 
 We value each and every one of you who has joined this server. You can get information about us from the <#996727429873795153> <#996730313436823593> <#994617934691442738> text channels. Please collect your roles from <#1007866858592022532>!
 
@@ -31,6 +32,8 @@ To get it straight, we care for you and want to help you in your IGCSE journey. 
 
 We are glad to see you here!
 ''')
+    except discord.errors.Forbidden:
+        pass
 
 class CancelPingBtn(discord.ui.View):
     def __init__(self):
