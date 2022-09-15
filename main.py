@@ -32,20 +32,6 @@ To get it straight, we care for you and want to help you in your IGCSE journey. 
 We are glad to see you here!
 ''')
 
-@bot.event
-async def on_member_leave(member: discord.Member):
-    await member.send('''We're sorry to see you leave 😢
-
-If you have a few minutes, we would request you to give us some feedback on your experience with Shamo Classes! Please send your feedback in one message in this DM only 😀
-''')
-    feedback = await bot.wait_for("message", check = lambda m: m.guild == None and m.author.id == member.id)
-    feedback_channel = bot.get_channel(1019914030518911037)
-    await feedback_channel.send(f'''New feedback!
-
-User: {member.mention}
-Feedback: {feedback.content}
-''')
-
 class CancelPingBtn(discord.ui.View):
     def __init__(self):
         super().__init__(timeout=890)
