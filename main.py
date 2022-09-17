@@ -1,10 +1,7 @@
 import nextcord as discord
 from nextcord.ext import commands
 import os
-import dotenv
 import time
-
-dotenv.load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
