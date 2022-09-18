@@ -97,7 +97,7 @@ async def search(interaction: discord.Interaction,
 
 class TopicalSubjects(discord.ui.Select):
     def __init__(self):
-        options = ["Additional Mathematics", "Mathematics", "Physics", "Chemistry", "Biology"]
+        options = [discord.SelectOption("Additional Mathematics"), discord.SelectOption("Mathematics"), discord.SelectOption("Physics"), discord.SelectOption("Chemistry"), discord.SelectOption("Biology")]
         super().__init__(placeholder = "Choose a subject", min_values = 1, max_values = 1, options = options)
 
     async def callback(self, interaction: discord.Interaction):
