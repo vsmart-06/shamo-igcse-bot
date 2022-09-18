@@ -3,7 +3,6 @@ from nextcord.ext import commands
 import os
 import time
 import requests
-import json
 
 intents = discord.Intents.default()
 intents.members = True
