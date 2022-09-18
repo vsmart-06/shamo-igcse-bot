@@ -95,35 +95,21 @@ async def search(interaction: discord.Interaction,
     except:
         await interaction.send("No results found in past papers. Try changing your query for better results.", ephemeral=True)
 
-class TopicalSubjects(discord.ui.Select):
-    def __init__(self):
-        options = [discord.SelectOption(label = "Additional Mathematics"), discord.SelectOption(label = "Mathematics"), discord.SelectOption(label = "Physics"), discord.SelectOption(label = "Chemistry"), discord.SelectOption(label = "Biology")]
-        super().__init__(placeholder = "Choose a subject", min_values = 1, max_values = 1, options = options)
-
-    async def callback(self, interaction: discord.Interaction):
-        subject = self.values[0]
-        view = discord.ui.View(timeout = None)
-        if subject == "Additional Mathematics":
-            url = "https://alvinacademy.com/igcse/0606-additional-mathematics-past-year-papers/0606-past-year-by-topics/"
-        elif subject == "Mathematics":
-            url = "https://gceguide.com/Books/tpp/Math-Classified-IGCSE.pdf"
-        elif subject == "Physics":
-            url = "https://www.physicsandmathstutor.com/physics-revision/igcse-cie/"
-        elif subject == "Chemistry":
-            url = "https://www.physicsandmathstutor.com/chemistry-revision/igcse-cie/"
-        elif subject == "Biology":
-            url = "https://www.physicsandmathstutor.com/biology-revision/igcse-cie/"
-        view.add_item(discord.ui.Button(label = subject, style = discord.ButtonStyle.url, url = url))
-        await interaction.response.edit_message(view = view)
-
-class TopicalView(discord.ui.View):
-    def __init__(self):
-        super().__init__(timeout = None)
-        self.add_item(TopicalSubjects())
-
 @bot.slash_command(name = "topicals", description = "Fetch the links to view topical papers")
-async def topicals(interaction: discord.Interaction):
-    await interaction.send(view = TopicalView())
+async def topicals(interaction: discord.Interaction, subject: str = discord.SlashOption(name = "subject", description = "Choose your subject", choices = ["Additional Mathematics", "Mathematics", "Physics", "Chemistry", "Biology"], required = True)):
+    if subject == "Additional Mathematics":
+        url = "https://alvinacademy.com/igcse/0606-additional-mathematics-past-year-papers/0606-past-year-by-topics/"
+    elif subject == "Mathematics":
+        url = "https://gceguide.com/Books/tpp/Math-Classified-IGCSE.pdf"
+    elif subject == "Physics":
+        url = "https://www.physicsandmathstutor.com/physics-revision/igcse-cie/"
+    elif subject == "Chemistry":
+        url = "https://www.physicsandmathstutor.com/chemistry-revision/igcse-cie/"
+    elif subject == "Biology":
+        url = "https://www.physicsandmathstutor.com/biology-revision/igcse-cie/"
+    view = discord.ui.View(timeout = None)
+    view.add_item(discord.ui.Button(label = subject, style = discord.ButtonStyle.url, url = url))
+    await interaction.response.send_message(view = view)
 
 
 bot.run(token)
