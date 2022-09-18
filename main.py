@@ -111,5 +111,15 @@ async def topicals(interaction: discord.Interaction, subject: str = discord.Slas
     view.add_item(discord.ui.Button(label = subject, style = discord.ButtonStyle.url, url = url))
     await interaction.send(view = view)
 
+@bot.slash_command(name = "worksheets", description = "Fetch the worksheets for different subjects")
+async def worksheets(interaction: discord.Interaction, subject: str = discord.SlashOption(name = "subject", description = "Choose your subject", choices = ["Additional Mathematics", "Physics"], required = True)):
+    if subject == "Additional Mathematics":
+        url = "https://drive.google.com/drive/folders/1Tbs9IumyPNZC3S4O1q2oZpA6Btq0ojeI?usp=sharing"
+    elif subject == "Physics":
+        url = "https://drive.google.com/drive/folders/13CzK4ZZFK4fSgg4QFb1jkGHxvhGV1qS-?usp=sharing"
+    view = discord.ui.View(timeout = None)
+    view.add_item(discord.ui.Button(label = subject, style = discord.ButtonStyle.url, url = url))
+    await interaction.send(view = view)
+
 
 bot.run(token)
