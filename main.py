@@ -109,7 +109,7 @@ async def topicals(interaction: discord.Interaction, subject: str = discord.Slas
         url = "https://www.physicsandmathstutor.com/biology-revision/igcse-cie/"
     view = discord.ui.View(timeout = None)
     view.add_item(discord.ui.Button(label = subject, style = discord.ButtonStyle.url, url = url))
-    await interaction.response.send_message(view = view)
+    await interaction.send(view = view)
 
 
 bot.run(token)
