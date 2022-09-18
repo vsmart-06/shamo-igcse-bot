@@ -2,6 +2,8 @@ import nextcord as discord
 from nextcord.ext import commands
 import os
 import time
+import requests
+import json
 
 intents = discord.Intents.default()
 intents.members = True
@@ -50,7 +52,7 @@ class CancelPingBtn(discord.ui.View):
             await self.message.delete()  # Delete original message
 
 
-@bot.slash_command(description="Ping a helper in any subject channel")
+@bot.slash_command(name = "helper", description="Ping a helper in any subject channel")
 async def helper(interaction: discord.Interaction):
     try:
         helper_role = discord.utils.get(interaction.guild.roles, id=helper_roles[interaction.channel.id])
@@ -69,5 +71,60 @@ async def helper(interaction: discord.Interaction):
     view.message = message
     view.helper_role = helper_role
     view.user = interaction.user
+
+@bot.slash_command(name = "search", description="Search for IGCSE past papers with subject code/question text")
+async def search(interaction: discord.Interaction,
+                 query: str = discord.SlashOption(name="query", description="Search query", required=True)):
+    await interaction.response.defer(ephemeral=True)
+    try:
+        response = requests.get(f"https://paper.sc/search/?as=json&query={query}").json()
+        if len(response['list']) == 0:
+            await interaction.send("No results found in past papers. Try changing your query for better results.", ephemeral=True)
+        else:
+            embed = discord.Embed(title="Potential Match",
+                                  description="Your question matched a past paper question!",
+                                  colour=discord.Colour.green())
+            for n, item in enumerate(response['list'][:3]):
+                embed.add_field(name="Subject", value=item['doc']['subject'], inline=True)
+                embed.add_field(name="Paper", value=item['doc']['paper'], inline=True)
+                embed.add_field(name="Session", value=item['doc']['time'], inline=True)
+                embed.add_field(name="Variant", value=item['doc']['variant'], inline=True)
+                embed.add_field(name="QP Link", value=f"https://paper.sc/doc/{item['doc']['_id']}", inline=True)
+                embed.add_field(name="MS Link", value=f"https://paper.sc/doc/{item['related'][0]['_id']}",
+                                inline=True)
+            await interaction.send(embed=embed, ephemeral=True)
+    except:
+        await interaction.send("No results found in past papers. Try changing your query for better results.", ephemeral=True)
+
+class TopicalSubjects(discord.ui.Select):
+    def __init__(self):
+        options = ["Additional Mathematics", "Mathematics", "Physics", "Chemistry", "Biology"]
+        super().__init__(placeholder = "Choose a subject", min_value = 1, max_value = 1, options = options)
+
+    async def callback(self, interaction: discord.Interaction):
+        subject = self.values[0]
+        view = discord.ui.View(timeout = None)
+        if subject == "Additional Mathematics":
+            url = "https://alvinacademy.com/igcse/0606-additional-mathematics-past-year-papers/0606-past-year-by-topics/"
+        elif subject == "Mathematics":
+            url = "https://gceguide.com/Books/tpp/Math-Classified-IGCSE.pdf"
+        elif subject == "Physics":
+            url = "https://www.physicsandmathstutor.com/physics-revision/igcse-cie/"
+        elif subject == "Chemistry":
+            url = "https://www.physicsandmathstutor.com/chemistry-revision/igcse-cie/"
+        elif subject == "Biology":
+            url = "https://www.physicsandmathstutor.com/biology-revision/igcse-cie/"
+        view.add_item(discord.ui.Button(label = subject, style = discord.ButtonStyle.url, url = url))
+        await interaction.response.edit_message(view = view)
+
+class TopicalView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout = None)
+        self.add_item(TopicalSubjects())
+
+@bot.slash_command(name = "topicals", description = "Fetch the links to view topical papers")
+async def topicals(interaction: discord.Interaction):
+    await interaction.send(view = TopicalView())
+
 
 bot.run(token)
