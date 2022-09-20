@@ -19,8 +19,6 @@ helper_roles = {994617607862878278: 994618740534689884, 994617634719023234: 9946
 @bot.event
 async def on_ready():
     print("Your wish is my command!")
-    shamit = await bot.fetch_user(720437409573240914)
-    await shamit.send("I'm ready!")
 
 @bot.event
 async def on_member_join(member: discord.Member):
