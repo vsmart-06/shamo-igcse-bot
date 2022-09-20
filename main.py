@@ -3,6 +3,9 @@ from nextcord.ext import commands
 import os
 import time
 import requests
+from pytesseract import pytesseract
+from PIL import Image
+import io
 
 intents = discord.Intents.default()
 intents.members = True
@@ -73,10 +76,26 @@ async def helper(interaction: discord.Interaction):
 
 @bot.slash_command(name = "search", description="Search for IGCSE past papers with subject code/question text")
 async def search(interaction: discord.Interaction,
-                 query: str = discord.SlashOption(name="query", description="Search query", required=True)):
-    await interaction.response.defer(ephemeral=True)
+                 query: str = discord.SlashOption(name="query", description="Search query", required=False),
+                 image: discord.Attachment = discord.SlashOption(name = "image", description = "Enter the image of the question to be searched", required = False)):
+
+    if image is not None or query is not None:
+        await interaction.response.defer(ephemeral=True)
+    else:
+        await interaction.send("You have to enter a query string or an image for this command to work!", ephemeral = True)
+        return
+
+    if image is not None:
+        response = requests.get(image.url, stream = True)
+        img = Image.open(io.BytesIO(response.content))
+        content = pytesseract.image_to_string(img)
+        content = content.replace("\n", " ")
+        content = content.replace("  ", " ")
+    else:
+        content = query
+        
     try:
-        response = requests.get(f"https://paper.sc/search/?as=json&query={query}").json()
+        response = requests.get(f"https://paper.sc/search/?as=json&query={content}").json()
         if len(response['list']) == 0:
             await interaction.send("No results found in past papers. Try changing your query for better results.", ephemeral=True)
         else:
