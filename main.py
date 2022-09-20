@@ -84,8 +84,6 @@ async def search(interaction: discord.Interaction,
         return
 
     if image is not None:
-        path_to_tesseract = r"./.apt/usr/bin/tesseract"
-        pytesseract.tesseract_cmd = path_to_tesseract
         response = requests.get(image.url, stream = True)
         img = Image.open(io.BytesIO(response.content))
         content = pytesseract.image_to_string(img)
