@@ -23,13 +23,13 @@ async def on_ready():
 @bot.event
 async def on_member_join(member: discord.Member):
     try:
-        await member.send('''Welcome to Shamo classes! 
+        await member.send('''Welcome to Shamo IGCSE!
 
-We value each and every one of you who has joined this server. You can get information about us from the <#996727429873795153> <#996730313436823593> <#994617934691442738> text channels. Please collect your roles from <#1007866858592022532>!
+We appreciate your initiative to join this server. We can tell you really want to improve your studies. You've come to the right place!
 
-To get it straight, we care for you and want to help you in your IGCSE journey. Have any questions, feeling low on motivation, not sure what to do... get help here!
+We are a community of tutors, helpers and other fellow students with whom you can interact and ask questions regarding your subject, or even life in general!
 
-We are glad to see you here!
+You can find more information about us in the <#996727429873795153>, <#996730313436823593>, and <#994617934691442738> text channels. Please collect your roles from the <#1007866858592022532> channel!
 ''')
     except discord.errors.Forbidden:
         pass
