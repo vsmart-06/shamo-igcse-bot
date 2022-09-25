@@ -6,6 +6,9 @@ import requests
 from pytesseract import pytesseract
 from PIL import Image
 import io
+import asyncio
+import dotenv
+dotenv.load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
@@ -23,6 +26,34 @@ async def on_ready():
     await my_user.send("Ready!")
 
 @bot.event
+async def on_message(ctx: discord.Message):
+
+    if ctx.author == bot.user:
+        return
+
+    if isinstance(ctx.channel, discord.DMChannel):
+        user = ctx.author
+        sure = await user.send("Would you like to send this message to the moderators?")
+        await sure.add_reaction("✅")
+        await sure.add_reaction("❌")
+        try:
+            reaction, person = await bot.wait_for("reaction_add", check = lambda r, p: p.id == user.id and str(r.emoji) in ["✅", "❌"] and r.message.id == sure.id, timeout = 120.0)
+        except asyncio.TimeoutError:
+            await sure.reply("Cancelling...", mention_author = False)
+        else:
+            if str(reaction.emoji) == "✅":
+                await sure.reply("This message will be sent to the moderators! Their reply will be sent to you in this DM!", mention_author = False)
+                modmail_channel = bot.get_channel(1023527239574376499)
+                modmail_embed = discord.Embed(title = "New message!", description = f'''**User**: <@!{user.id}>
+
+**Message**: {ctx.content}
+''', colour = discord.Colour.orange())
+                await modmail_channel.send(embed = modmail_embed)
+
+            else:
+                await sure.reply("Cancelling...", mention_author = False)
+
+@bot.event
 async def on_member_join(member: discord.Member):
     try:
         await member.send('''Welcome to Shamo IGCSE!
@@ -35,6 +66,12 @@ You can find more information about us in the <#996727429873795153>, <#996730313
 ''')
     except discord.errors.Forbidden:
         pass
+
+@bot.slash_command(name = "reply", description = "Send a reply to a user for their mod mail query")
+async def reply(interaction: discord.Interaction, user: discord.Member = discord.SlashOption(name = "user", description = "The user to send the reply to", required = True), message: str = discord.SlashOption(name = "message", description = "The message to be sent", required = True)):
+    modmail_reply = discord.Embed(title = "Message from the moderators", description = message, colour = discord.Colour.orange())
+    await user.send(embed = modmail_reply)
+    await interaction.send("The message has been sent!", ephemeral = True)
 
 class CancelPingBtn(discord.ui.View):
     def __init__(self):
