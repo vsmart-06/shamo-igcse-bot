@@ -7,8 +7,6 @@ from pytesseract import pytesseract
 from PIL import Image
 import io
 import asyncio
-import dotenv
-dotenv.load_dotenv()
 
 intents = discord.Intents.default()
 intents.members = True
