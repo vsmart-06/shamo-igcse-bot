@@ -42,7 +42,7 @@ async def on_message(ctx: discord.Message):
             await sure.reply("Cancelling...", mention_author = False)
         else:
             if str(reaction.emoji) == "✅":
-                await sure.reply("This message will be sent to the moderators! Their reply will be sent to you in this DM!", mention_author = False)
+                await ctx.reply("This message will be sent to the moderators! Their reply will be sent to you in this DM!", mention_author = False)
                 modmail_channel = bot.get_channel(1023527239574376499)
                 modmail_embed = discord.Embed(title = "New message!", description = f'''**User**: <@!{user.id}>
 
