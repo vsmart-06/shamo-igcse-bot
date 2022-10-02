@@ -116,7 +116,7 @@ async def search(interaction: discord.Interaction,
                  image: discord.Attachment = discord.SlashOption(name = "image", description = "Enter the image of the question to be searched", required = False)):
 
     if image is not None or query is not None:
-        await interaction.response.defer(ephemeral=True)
+        await interaction.response.defer()
     else:
         await interaction.send("You have to enter a query string or an image for this command to work!", ephemeral = True)
         return
@@ -133,7 +133,7 @@ async def search(interaction: discord.Interaction,
     try:
         response = requests.get(f"https://paper.sc/search/?as=json&query={content}").json()
         if len(response['list']) == 0:
-            await interaction.send("No results found in past papers. Try changing your query for better results.")
+            await interaction.send("No results found in past papers. Try changing your query for better results.", ephemeral=True)
         else:
             embed = discord.Embed(title="Potential Match",
                                   description="Your question matched a past paper question!",
@@ -148,7 +148,7 @@ async def search(interaction: discord.Interaction,
                                 inline=True)
             await interaction.send(embed=embed)
     except:
-        await interaction.send("No results found in past papers. Try changing your query for better results.")
+        await interaction.send("No results found in past papers. Try changing your query for better results.", ephemeral=True)
 
 @bot.slash_command(name = "topicals", description = "Fetch the links to view topical papers")
 async def topicals(interaction: discord.Interaction, subject: str = discord.SlashOption(name = "subject", description = "Choose your subject", choices = ["Additional Mathematics", "Mathematics", "Physics", "Chemistry", "Biology"], required = True)):
