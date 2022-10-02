@@ -146,7 +146,7 @@ async def search(interaction: discord.Interaction,
                 embed.add_field(name="QP Link", value=f"https://paper.sc/doc/{item['doc']['_id']}", inline=True)
                 embed.add_field(name="MS Link", value=f"https://paper.sc/doc/{item['related'][0]['_id']}",
                                 inline=True)
-            await interaction.send(embed=embed)
+            await interaction.send(embed=embed, ephemeral = False)
     except:
         await interaction.send("No results found in past papers. Try changing your query for better results.", ephemeral=True)
 
