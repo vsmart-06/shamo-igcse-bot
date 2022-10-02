@@ -115,9 +115,7 @@ async def search(interaction: discord.Interaction,
                  query: str = discord.SlashOption(name="query", description="Search query", required=False),
                  image: discord.Attachment = discord.SlashOption(name = "image", description = "Enter the image of the question to be searched", required = False)):
 
-    if image is not None or query is not None:
-        await interaction.response.defer()
-    else:
+    if image is None and query is None:
         await interaction.send("You have to enter a query string or an image for this command to work!", ephemeral = True)
         return
 
