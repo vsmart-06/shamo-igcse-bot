@@ -133,7 +133,7 @@ async def search(interaction: discord.Interaction,
     try:
         response = requests.get(f"https://paper.sc/search/?as=json&query={content}").json()
         if len(response['list']) == 0:
-            await interaction.send("No results found in past papers. Try changing your query for better results.", ephemeral=True)
+            await interaction.send("No results found in past papers. Try changing your query for better results.")
         else:
             embed = discord.Embed(title="Potential Match",
                                   description="Your question matched a past paper question!",
@@ -146,9 +146,9 @@ async def search(interaction: discord.Interaction,
                 embed.add_field(name="QP Link", value=f"https://paper.sc/doc/{item['doc']['_id']}", inline=True)
                 embed.add_field(name="MS Link", value=f"https://paper.sc/doc/{item['related'][0]['_id']}",
                                 inline=True)
-            await interaction.send(embed=embed, ephemeral = False)
+            await interaction.send(embed=embed)
     except:
-        await interaction.send("No results found in past papers. Try changing your query for better results.", ephemeral=True)
+        await interaction.send("No results found in past papers. Try changing your query for better results.")
 
 @bot.slash_command(name = "topicals", description = "Fetch the links to view topical papers")
 async def topicals(interaction: discord.Interaction, subject: str = discord.SlashOption(name = "subject", description = "Choose your subject", choices = ["Additional Mathematics", "Mathematics", "Physics", "Chemistry", "Biology"], required = True)):
