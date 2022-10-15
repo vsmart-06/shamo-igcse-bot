@@ -70,7 +70,7 @@ You can find more information about us in the <#996727429873795153>, <#996730313
 async def reply(interaction: discord.Interaction, user: discord.Member = discord.SlashOption(name = "user", description = "The user to send the reply to", required = True), message: str = discord.SlashOption(name = "message", description = "The message to be sent", required = True)):
     modmail_reply = discord.Embed(title = "Message from the moderators", description = message, colour = discord.Colour.orange())
     await user.send(embed = modmail_reply)
-    await interaction.send("The message has been sent!", ephemeral = True)
+    await interaction.send("The following message has been sent!", embed = modmail_reply)
 
 class CancelPingBtn(discord.ui.View):
     def __init__(self):
