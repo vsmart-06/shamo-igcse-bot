@@ -68,6 +68,14 @@ You can find more information about us in the <#996727429873795153>, <#996730313
 
 @bot.slash_command(name = "reply", description = "Send a reply to a user for their mod mail query", default_member_permissions = discord.Permissions(administrator = True))
 async def reply(interaction: discord.Interaction, user: discord.Member = discord.SlashOption(name = "user", description = "The user to send the reply to", required = True), message: str = discord.SlashOption(name = "message", description = "The message to be sent", required = True), link: str = discord.SlashOption(name = "link", description = "The link of the message from the user", required = True)):
+    id = link.split("/")[-1]
+    try:
+        id = int(id)
+        msg = await interaction.channel.fetch_message(id)
+        link = msg.jump_url
+    except:
+        interaction.send("Invalid message link", ephemeral = True)
+        return
     modmail_reply = discord.Embed(title = "Message from the moderators", description = message, colour = discord.Colour.orange())
     await user.send(embed = modmail_reply)
     await interaction.send(f"The following message has been sent to {user.mention} by {interaction.user.mention} regarding {link}", embed = modmail_reply)
