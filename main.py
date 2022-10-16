@@ -66,19 +66,40 @@ You can find more information about us in the <#996727429873795153>, <#996730313
     except discord.errors.Forbidden:
         pass
 
-@bot.slash_command(name = "reply", description = "Send a reply to a user for their mod mail query", default_member_permissions = discord.Permissions(administrator = True))
-async def reply(interaction: discord.Interaction, user: discord.Member = discord.SlashOption(name = "user", description = "The user to send the reply to", required = True), message: str = discord.SlashOption(name = "message", description = "The message to be sent", required = True), link: str = discord.SlashOption(name = "link", description = "The link of the message from the user", required = True)):
-    id = link.split("/")[-1]
-    try:
-        id = int(id)
-        msg = await interaction.channel.fetch_message(id)
-        link = msg.jump_url
-    except:
-        await interaction.send("Invalid message link", ephemeral = True)
+
+async def on_message(message):
+    if message.author.bot:
         return
-    modmail_reply = discord.Embed(title = "Message from the moderators", description = message, colour = discord.Colour.orange())
-    await user.send(embed = modmail_reply)
-    await interaction.send(f"The following message has been sent to {user.mention} by {interaction.user.mention} regarding {link}", embed = modmail_reply)
+    guild = bot.get_guild(GUILD_ID)
+    mod_mail_channel = get(guild.text_channels, id=1023527239574376499)
+
+    # Mod mail
+    if not message.guild:
+        threads_names_ids = [[thread.name, thread.id] for thread in mod_mail_channel.threads]
+        for thread in threads_names_ids:
+            if thread[0] == str(message.author.id):
+                thread = mod_mail_channel.get_thread(thread[1])
+                if message.content:
+                    await thread.send(message.content)
+                for attachment in message.attachments:
+                    await thread.send(file=await attachment.to_file())
+                return
+        embed = discord.Embed(colour=discord.Colour.dark_blue(), title=f'Mail sent by {message.author}', description=message.content)
+        mail = await mod_mail_channel.send(embed=embed)
+        await mail.create_thread(name=f'{message.author.id}')
+        await message.reply("Your message has been sent to Shamo classes moderators! Any mod reply will be conveyed to you by DM.")
+        return
+
+    if type(message.channel) == discord.Thread:
+        if message.channel.parent == mod_mail_channel:
+            user_id = int(str(message.channel))
+            user = bot.get_user(user_id)
+            if message.content:
+                await user.send(content=message.content)
+            for attachment in message.attachments:
+                await user.send(file=await attachment.to_file())
+            return
+    
 
 class CancelPingBtn(discord.ui.View):
     def __init__(self):
