@@ -74,7 +74,7 @@ async def reply(interaction: discord.Interaction, user: discord.Member = discord
         msg = await interaction.channel.fetch_message(id)
         link = msg.jump_url
     except:
-        interaction.send("Invalid message link", ephemeral = True)
+        await interaction.send("Invalid message link", ephemeral = True)
         return
     modmail_reply = discord.Embed(title = "Message from the moderators", description = message, colour = discord.Colour.orange())
     await user.send(embed = modmail_reply)
