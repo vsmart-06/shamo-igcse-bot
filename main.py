@@ -79,7 +79,8 @@ async def reply(interaction: discord.Interaction, user: discord.Member = discord
     modmail_reply = discord.Embed(title = "Message from the moderators", description = message, colour = discord.Colour.orange())
     await user.send(embed = modmail_reply)
     mod_reply = await interaction.send(f"The following message has been sent to {user.mention} by {interaction.user.mention} regarding {link}", embed = modmail_reply)
-    await msg.edit(f"This has been last cleared by {interaction.user.mention} in {mod_reply.jump_url}", embed = msg.embeds[0])
+    orig_msg = await mod_reply.fetch()
+    await msg.edit(f"This has been last cleared by {interaction.user.mention} in {orig_msg.jump_url}", embed = msg.embeds[0])
 
 class CancelPingBtn(discord.ui.View):
     def __init__(self):
