@@ -1,2 +1,2 @@
-[phases.setup]
+[phases.name]
 aptPkgs = ["...", "tesseract-ocr", "tesseract-ocr-eng", "libarchive13"]
