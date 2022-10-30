@@ -1,2 +1,2 @@
-[phases.name]
-aptPkgs = ["...", "tesseract-ocr", "tesseract-ocr-eng", "libarchive13"]
+[phases.setup]
+nixPkgs = ["...", "tesseract", "libarchive"]
