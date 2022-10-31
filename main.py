@@ -97,7 +97,7 @@ async def reply(interaction: discord.Interaction, user: discord.Member = discord
     except:
         await interaction.send("Invalid message link", ephemeral = True)
         return
-    interaction.response.send_modal(Reply(user, link, msg))
+    await interaction.response.send_modal(Reply(user, link, msg))
 
 class CancelPingBtn(discord.ui.View):
     def __init__(self):
