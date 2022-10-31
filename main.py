@@ -81,7 +81,7 @@ class Reply(discord.ui.Modal):
         self.add_item(self.description)
     
     async def callback(self, interaction: discord.Interaction) -> None:
-        reply_embed = discord.Embed(title = "Message from the moderators", description = self.description.value, colour = discord.Colour.blue())
+        reply_embed = discord.Embed(title = "Message from the moderators", description = self.description.value, colour = discord.Colour.orange())
         await self.user.send(embed = reply_embed)
         mod_reply = await interaction.send(f"The following message has been sent to {self.user.mention} by {interaction.user.mention} regarding {self.link}", embed = reply_embed)
         orig_msg = await mod_reply.fetch()
