@@ -66,8 +66,29 @@ You can find more information about us in the <#996727429873795153>, <#996730313
     except discord.errors.Forbidden:
         pass
 
+class Reply(discord.ui.Modal):
+    def __init__(self, user: discord.User, link: str, msg: discord.Message):
+        super().__init__("Reply to a message!", timeout = None)
+        self.user = user
+        self.link = link
+        self.msg = msg
+        self.description = discord.ui.TextInput(
+            label = "Content of the message",
+            style = discord.TextInputStyle.paragraph,
+            placeholder = "This is the message that will be sent to the user",
+            required = True
+        )
+        self.add_item(self.description)
+    
+    async def callback(self, interaction: discord.Interaction) -> None:
+        reply_embed = discord.Embed(title = "Message from the moderators", description = self.description.value, colour = discord.Colour.blue())
+        await self.user.send(embed = reply_embed)
+        mod_reply = await interaction.send(f"The following message has been sent to {self.user.mention} by {interaction.user.mention} regarding {self.link}", embed = reply_embed)
+        orig_msg = await mod_reply.fetch()
+        await self.msg.edit(f"This has been last cleared by {interaction.user.mention} in {orig_msg.jump_url}", embed = self.msg.embeds[0])
+
 @bot.slash_command(name = "reply", description = "Send a reply to a user for their mod mail query", default_member_permissions = discord.Permissions(administrator = True))
-async def reply(interaction: discord.Interaction, user: discord.Member = discord.SlashOption(name = "user", description = "The user to send the reply to", required = True), message: str = discord.SlashOption(name = "message", description = "The message to be sent", required = True), link: str = discord.SlashOption(name = "link", description = "The link of the message from the user", required = True)):
+async def reply(interaction: discord.Interaction, user: discord.Member = discord.SlashOption(name = "user", description = "The user to send the reply to", required = True), link: str = discord.SlashOption(name = "link", description = "The link of the message from the user", required = True)):
     id = link.split("/")[-1]
     try:
         id = int(id)
@@ -76,11 +97,7 @@ async def reply(interaction: discord.Interaction, user: discord.Member = discord
     except:
         await interaction.send("Invalid message link", ephemeral = True)
         return
-    modmail_reply = discord.Embed(title = "Message from the moderators", description = message, colour = discord.Colour.orange())
-    await user.send(embed = modmail_reply)
-    mod_reply = await interaction.send(f"The following message has been sent to {user.mention} by {interaction.user.mention} regarding {link}", embed = modmail_reply)
-    orig_msg = await mod_reply.fetch()
-    await msg.edit(f"This has been last cleared by {interaction.user.mention} in {orig_msg.jump_url}", embed = msg.embeds[0])
+    interaction.response.send_modal(Reply(user, link, msg))
 
 class CancelPingBtn(discord.ui.View):
     def __init__(self):
